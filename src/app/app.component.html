@@ -7,6 +7,12 @@
 				Count: {{ReposWithCodejson.length}}
 			</mat-panel-description>
 		</mat-expansion-panel-header>
+		<!-- filter -->
+		<div class="example-header">
+			<mat-form-field>
+			  <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+			</mat-form-field>
+		</div>
 
 		<mat-table #table [dataSource]="dataSourceWithCode" matSort>
 			<ng-container matColumnDef="name">
@@ -15,12 +21,16 @@
 			</ng-container>
 			<ng-container matColumnDef="created_at">
 				<mat-header-cell *matHeaderCellDef mat-sort-header>Created Date</mat-header-cell>
-				<mat-cell *matCellDef="let element"> {{element.created_at}} </mat-cell>
+				<mat-cell *matCellDef="let element"> {{element.created_at | date: 'MM/dd/yyyy'}} </mat-cell>
 			</ng-container>
 			<ng-container matColumnDef="description">
 				<mat-header-cell *matHeaderCellDef mat-sort-header>Description</mat-header-cell>
 				<mat-cell *matCellDef="let element"> {{element.description}} </mat-cell>
 			</ng-container>
+			<ng-container matColumnDef="liveurl">
+				<mat-header-cell *matHeaderCellDef mat-sort-header>URL</mat-header-cell>
+				<mat-cell *matCellDef="let element"><a [href]="element.liveurl" target="_blank">{{element.liveurl}}</a> </mat-cell>
+			</ng-container>			
 			<ng-container matColumnDef="contact">
 				<mat-header-cell *matHeaderCellDef mat-sort-header>Contact</mat-header-cell>
 				<mat-cell *matCellDef="let element"> {{element.contact}} </mat-cell>

@@ -1,6 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
+import { ChangeDetectorRef } from '@angular/core';
 import { WIMRepoService } from './services/wimrepo.service';
 import { MatTableDataSource, MatSort } from '@angular/material';
+import { Irepo } from './interfaces/repo.interface';
 
 function compare(a, b, isAsc) {
 	return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
@@ -17,18 +19,18 @@ export class AppComponent {
 	public ReposWithOutCodejson: Array<any>;
 	public displayedColumnsWith: Array<string>; 
 	public displayedColumnsWithOut: Array<string>; 
-	public dataSourceWithCode;
+	public dataSourceWithCode: MatTableDataSource<Irepo>;
 	public dataSourceWithOutCode;
 	//public sortedData: any;
 
-	constructor(private _wimrepoService: WIMRepoService) { }
+	constructor(private _wimrepoService: WIMRepoService, private _cdr: ChangeDetectorRef) { }
 
 	ngOnInit() {
 		this.ReposWithCodejson = [];
 		this.ReposWithOutCodejson = [];
-		this.displayedColumnsWith = ['name', 'created_at', 'description', 'contact', 'status'];
+		this.displayedColumnsWith = ['name', 'created_at', 'description', 'liveurl', 'contact', 'status'];
 		this.displayedColumnsWithOut = ['name', 'created_at', 'description'];
-		this._wimrepoService.RepoList.subscribe((repos: Array<any>) => {
+		this._wimrepoService.RepoList.subscribe((repos: Array<Irepo>) => {
 			let index = 0;
 			repos.forEach(r => {
 				index++;
@@ -36,7 +38,8 @@ export class AppComponent {
 					let decodedContent = atob(code.content);
 					let jsonContent = JSON.parse(decodedContent);
 					r.status = jsonContent[0].status;
-					r.contact = jsonContent[0].contact.name
+					r.contact = jsonContent[0].contact.name;
+					r.liveurl = jsonContent[0].homepageURL;
 					this.ReposWithCodejson.push(r);
 				}, error => {
 					this.ReposWithOutCodejson.push(r);
@@ -52,31 +55,12 @@ export class AppComponent {
 		this.dataSourceWithCode.sort = this.sort;
 		this.dataSourceWithOutCode  = new MatTableDataSource(this.ReposWithOutCodejson);
 		this.dataSourceWithOutCode.sort = this.sort;
+		this._cdr.detectChanges(); // fixes ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked
 	}
 
-	public test(r) {
-		let what = "stop";
-
+	public applyFilter(filterValue: string) {
+		let filterV = filterValue.trim(); // Remove whitespace
+		filterV = filterV.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+		this.dataSourceWithCode.filter = filterV;	
 	}
-	/*
-	sortData(sort: Sort) {
-		const data = this.ReposWithCodejson.slice();
-		if (!sort.active || sort.direction == '') {
-			this.ReposWithCodejson = data;
-			return;
-		}
-		this.ReposWithCodejson = data.sort((a, b) => {
-			let isAsc = sort.direction == 'asc';
-			switch (sort.active) {
-			  case 'name': return compare(a.name, b.name, isAsc);
-			  case 'created_at': return compare(a.created_at, b.created_at, isAsc);
-			  case 'description': return compare(a.description, b.description, isAsc);
-			  case 'contact': return compare(a.contact, b.contact, isAsc);
-			  case 'status': return compare(a.status, b.status, isAsc);
-			  default: return 0;
-			}
-		});
-	}*/
-	
-
 }

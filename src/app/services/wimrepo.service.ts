@@ -15,26 +15,28 @@ import "rxjs/add/operator/map";
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
 import { CONFIG } from "./config";
+import { Irepo } from '../interfaces/repo.interface';
+import { Icodejson } from '../interfaces/code.interface';
 
 
 @Injectable()
 export class WIMRepoService {
-    private repoList1:Array<any>;
-    private repoList2:Array<any>;
-    private _repoListSubject: Subject<Array<any>> = new Subject<Array<any>>();
+    private repoList1:Array<Irepo>;
+    private repoList2:Array<Irepo>;
+    private _repoListSubject: Subject<Array<Irepo>> = new Subject<Array<Irepo>>();
 
     constructor(private _http: Http){
         this.getRepos();
     }
 
-    public get RepoList():Observable<Array<any>> {
+    public get RepoList():Observable<Array<Irepo>> {
         return this._repoListSubject.asObservable();
     }
     // get all the repos
     private getRepos(){
         let options = new RequestOptions({ headers: CONFIG.JSON_HEADERS });
 		this._http.get(CONFIG.GETREPOS1_URL, options)
-			.map(res => <Array<any>>res.json())
+			.map(res => <Array<Irepo>>res.json())
 			.catch((err, caught) => this.handleError(err, caught))
 			.subscribe(p => {                
                 this.repoList1 = p;
@@ -45,7 +47,7 @@ export class WIMRepoService {
                 }
             });
             this._http.get(CONFIG.GETREPOS2_URL, options)
-			.map(res => <Array<any>>res.json())
+			.map(res => <Array<Irepo>>res.json())
 			.catch((err, caught) => this.handleError(err, caught))
 			.subscribe(p => {
                 this.repoList2= p;
@@ -58,12 +60,11 @@ export class WIMRepoService {
     }
 
     // get each repo's code.json file
-    public getRepoCodejson(repoName):Observable<any> {
-        let options = new RequestOptions({ headers: CONFIG.JSON_HEADERS });
-        //                                            STNPublic/contents/code.json        
+    public getRepoCodejson(repoName):Observable<Icodejson> {
+        let options = new RequestOptions({ headers: CONFIG.JSON_HEADERS });     
 		return this._http.get(CONFIG.GETREPO_CODE_URL + repoName + "/contents/code.json", options)
-            .map((response: Response) => <any>response.json());
-            //.catch((err, caught) => this.handleError(err, caught));
+            .map((response: Response) => <Icodejson>response.json())
+            .catch((err, caught) => this.handleError(err, caught));
     }
 
     private extractData(res: Response) {
