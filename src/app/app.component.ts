@@ -4,10 +4,6 @@ import { WIMRepoService } from './services/wimrepo.service';
 import { MatTableDataSource, MatSort } from '@angular/material';
 import { Irepo } from './interfaces/repo.interface';
 
-function compare(a, b, isAsc) {
-	return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
-}
-
 @Component({
 	selector: 'app-root',
 	templateUrl: './app.component.html',

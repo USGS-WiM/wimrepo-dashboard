@@ -1,10 +1,9 @@
 // ------------------------------------------------------------------------------
 // ------------ config ----------------------------------------------------------
 // ------------------------------------------------------------------------------
-// copyright:   2017 WiM - USGS
-// authors:     Tonia Roddick USGS Web Informatics and Mapping
-//              
+// copyright:   2017 WiM - USGS              
 // purpose:     Configuration file for all the urls
+
 import {Injectable} from "@angular/core";
 import {Headers} from "@angular/http";
 

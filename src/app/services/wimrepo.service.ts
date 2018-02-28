@@ -1,10 +1,8 @@
 // ------------------------------------------------------------------------------
-// ------------ siglservices.service --------------------------------------------
+// ------------ wimrepo.service.service --------------------------------------------
 // ------------------------------------------------------------------------------
-// copyright:   2017 WiM - USGS
-// authors:     Tonia Roddick USGS Web Informatics and Mapping
-//              Erik Myers USGS Web Informatics and Mapping
-// purpose:     Service for the whole application. setters/getters needed to communicate information with the mapview.component, sidebar.component, and filter.component
+// copyright:   2018 WiM - USGS
+// purpose:     Service for retrieving github api endpoints (repos and each repo's code.json file)
 
 import { Injectable } from '@angular/core';
 import { Http, Response, RequestOptions, URLSearchParams } from "@angular/http";
@@ -22,19 +20,22 @@ import { Icodejson } from '../interfaces/code.interface';
 @Injectable()
 export class WIMRepoService {
     private repoList1:Array<Irepo>;
-    private repoList2:Array<Irepo>;
-    private _repoListSubject: Subject<Array<Irepo>> = new Subject<Array<Irepo>>();
+    private repoList2:Array<Irepo>; 
 
     constructor(private _http: Http){
         this.getRepos();
     }
-
+    
+    private _repoListSubject: Subject<Array<Irepo>> = new Subject<Array<Irepo>>();
+    // getter: subscribed to from app.component.ts (sends every time the _repoListSubject gets updated - which is only once upon initial load)
     public get RepoList():Observable<Array<Irepo>> {
         return this._repoListSubject.asObservable();
     }
-    // get all the repos
+
+    // get all the repos (called from constructor)
     private getRepos(){
         let options = new RequestOptions({ headers: CONFIG.JSON_HEADERS });
+        // need to request the repos in 2 separate calls due to limits on # of repos returned. using '?page=1&per_page=100'
 		this._http.get(CONFIG.GETREPOS1_URL, options)
 			.map(res => <Array<Irepo>>res.json())
 			.catch((err, caught) => this.handleError(err, caught))
@@ -46,6 +47,7 @@ export class WIMRepoService {
                     this._repoListSubject.next(this.repoList1);				
                 }
             });
+            // need to request the repos in 2 separate calls due to limits on # of repos returned. using '?page=2&per_page=100'
             this._http.get(CONFIG.GETREPOS2_URL, options)
 			.map(res => <Array<Irepo>>res.json())
 			.catch((err, caught) => this.handleError(err, caught))
@@ -59,7 +61,7 @@ export class WIMRepoService {
 			});
     }
 
-    // get each repo's code.json file
+    // get each repo's code.json file (called from the app.component.ts subscription to RepoList() )
     public getRepoCodejson(repoName):Observable<Icodejson> {
         let options = new RequestOptions({ headers: CONFIG.JSON_HEADERS });     
 		return this._http.get(CONFIG.GETREPO_CODE_URL + repoName + "/contents/code.json", options)
@@ -67,11 +69,6 @@ export class WIMRepoService {
             .catch((err, caught) => this.handleError(err, caught));
     }
 
-    private extractData(res: Response) {
-        let body = res.json();
-        console.log("Body Data = "+body.data);
-        return body.data || [];
-      }
     //Error Handler
 	private handleError(error: any, caught: any) {		
 		let errMsg = (error.message) ? error.message :

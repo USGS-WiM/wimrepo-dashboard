@@ -1,5 +1,6 @@
 <h2>WIM Github Repository Dashboard</h2>
 <mat-accordion>
+
 	<mat-expansion-panel>
 		<mat-expansion-panel-header>
 			<mat-panel-title>Repos with Code.json file</mat-panel-title>
@@ -13,7 +14,7 @@
 			  <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
 			</mat-form-field>
 		</div>
-
+		<!-- Table of Repos with Code.json file-->
 		<mat-table #table [dataSource]="dataSourceWithCode" matSort>
 			<ng-container matColumnDef="name">
 				<mat-header-cell *matHeaderCellDef mat-sort-header>Repo Name</mat-header-cell>
@@ -44,6 +45,7 @@
 		</mat-table>
 
 	</mat-expansion-panel>
+
 	<mat-expansion-panel>
 		<mat-expansion-panel-header>
 			<mat-panel-title>Repos with out Code.json file</mat-panel-title>
@@ -52,6 +54,7 @@
 			</mat-panel-description>
 		</mat-expansion-panel-header>
 
+		<!-- Table of Repos without Code.json file-->
 		<mat-table #table [dataSource]="dataSourceWithOutCode" matSort>
 			<ng-container matColumnDef="name">
 				<mat-header-cell *matHeaderCellDef mat-sort-header>Repo Name</mat-header-cell>
@@ -70,4 +73,5 @@
 		</mat-table>
 
 	</mat-expansion-panel>
+	
 </mat-accordion>
