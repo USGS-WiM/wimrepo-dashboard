@@ -11,6 +11,8 @@ import { Irepo } from './interfaces/repo.interface';
 })
 export class AppComponent {
 	@ViewChild(MatSort) sort: MatSort;
+	@ViewChild('withCodeTable') withCodeTableSort: MatSort;
+	@ViewChild('withoutCodeTable') withoutCodeTableSort: MatSort;
 	public ReposWithCodejson: Array<any>;
 	public ReposWithOutCodejson: Array<any>;
 	public displayedColumnsWith: Array<string>; 
@@ -48,15 +50,16 @@ export class AppComponent {
 	// set this here after everything is done so that the 'this.ReposWithCodejson will have value
 	ngAfterViewChecked() {
 		this.dataSourceWithCode  = new MatTableDataSource(this.ReposWithCodejson);
-		this.dataSourceWithCode.sort = this.sort;
+		this.dataSourceWithCode.sort = this.withCodeTableSort;
 		this.dataSourceWithOutCode  = new MatTableDataSource(this.ReposWithOutCodejson);
-		this.dataSourceWithOutCode.sort = this.sort;
+		this.dataSourceWithOutCode.sort = this.withoutCodeTableSort;
 		this._cdr.detectChanges(); // fixes ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked
 	}
 
 	public applyFilter(filterValue: string) {
-		let filterV = filterValue.trim(); // Remove whitespace
-		filterV = filterV.toLowerCase(); // MatTableDataSource defaults to lowercase matches
-		this.dataSourceWithCode.filter = filterV;	
+		filterValue = filterValue.trim(); // Remove whitespace
+		filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+		this.dataSourceWithCode.filter = filterValue;
+		//this.dataSourceWithCode.data = this.dataSourceWithCode.filteredData	//trying to get filter to set data
 	}
 }

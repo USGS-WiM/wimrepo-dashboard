@@ -16,6 +16,5 @@ export class CONFIG {
     public static get GETREPOS2_URL(): string { return this.baseURL + "orgs/" + this.ORG + "/repos?page=2&per_page=100"; };
                                                                        
     public static get GETREPO_CODE_URL(): string{ return this.baseURL + "repos/" + this.ORG + "/" }
-    public static get JSON_HEADERS() { return new Headers({ "Accept": "application/json", "Authorization": "Basic " + btoa("")})};
-
+    public static get JSON_HEADERS() { return new Headers({ "Accept": "application/json", "Authorization": "Basic " + btoa('kjacobsen16:Katuelis9!')})};
 }
