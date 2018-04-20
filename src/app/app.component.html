@@ -11,38 +11,61 @@
 		<!-- filter -->
 		<div class="example-header">
 			<mat-form-field>
-			  <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+				<input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
 			</mat-form-field>
 		</div>
 		<!-- Table of Repos with Code.json file-->
-		<mat-table #table [dataSource]="dataSourceWithCode" matSort>
-			<ng-container matColumnDef="name">
-				<mat-header-cell *matHeaderCellDef mat-sort-header>Repo Name</mat-header-cell>
-				<mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
-			</ng-container>
-			<ng-container matColumnDef="created_at">
-				<mat-header-cell *matHeaderCellDef mat-sort-header>Created Date</mat-header-cell>
-				<mat-cell *matCellDef="let element"> {{element.created_at | date: 'MM/dd/yyyy'}} </mat-cell>
-			</ng-container>
-			<ng-container matColumnDef="description">
-				<mat-header-cell *matHeaderCellDef mat-sort-header>Description</mat-header-cell>
-				<mat-cell *matCellDef="let element"> {{element.description}} </mat-cell>
-			</ng-container>
-			<ng-container matColumnDef="liveurl">
-				<mat-header-cell *matHeaderCellDef mat-sort-header>URL</mat-header-cell>
-				<mat-cell *matCellDef="let element"><a [href]="element.liveurl" target="_blank">{{element.liveurl}}</a> </mat-cell>
-			</ng-container>			
-			<ng-container matColumnDef="contact">
-				<mat-header-cell *matHeaderCellDef mat-sort-header>Contact</mat-header-cell>
-				<mat-cell *matCellDef="let element"> {{element.contact}} </mat-cell>
-			</ng-container>
-			<ng-container matColumnDef="status">
-				<mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
-				<mat-cell *matCellDef="let element"> {{element.status}} </mat-cell>
-			</ng-container>
-			<mat-header-row *matHeaderRowDef="displayedColumnsWith"></mat-header-row>
-			<mat-row *matRowDef="let row; columns: displayedColumnsWith;"></mat-row>
-		</mat-table>
+		<div class="example-container mat-elevation-z8">
+			<mat-table #withCodeTable="matSort" [dataSource]="dataSourceWithCode" matSort>
+
+				<!-- repo name -->
+				<ng-container matColumnDef="name">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Repo Name</mat-header-cell>
+					<mat-cell *matCellDef="let repo"> {{repo.name}} </mat-cell>
+				</ng-container>
+
+				<!-- date repo created -->
+				<ng-container matColumnDef="created_at">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Created Date</mat-header-cell>
+					<mat-cell *matCellDef="let repo"> {{repo.created_at | date: 'MM/dd/yyyy'}} </mat-cell>
+				</ng-container>
+
+				<!-- description -->
+				<ng-container matColumnDef="description">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Description</mat-header-cell>
+					<mat-cell *matCellDef="let repo"> {{repo.description}} </mat-cell>
+				</ng-container>
+
+				<!-- homepage url -->
+				<ng-container matColumnDef="liveurl">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>URL</mat-header-cell>
+					<mat-cell *matCellDef="let repo">
+						<a [href]="repo.liveurl" target="_blank">{{repo.liveurl}}</a>
+					</mat-cell>
+				</ng-container>
+
+				<!-- contact person -->
+				<ng-container matColumnDef="contact">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Contact</mat-header-cell>
+					<mat-cell *matCellDef="let repo"> {{repo.contact}} </mat-cell>
+				</ng-container>
+
+				<!-- status -->
+				<ng-container matColumnDef="status">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+					<mat-cell *matCellDef="let repo"> {{repo.status}} </mat-cell>
+				</ng-container>
+
+				<!-- language -->
+				<ng-container matColumnDef="language">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Language</mat-header-cell>
+					<mat-cell *matCellDef="let repo"> {{repo.language}} </mat-cell>
+				</ng-container>
+
+				<mat-header-row *matHeaderRowDef="displayedColumnsWith"></mat-header-row>
+				<mat-row *matRowDef="let repo; columns: displayedColumnsWith;"></mat-row>
+			</mat-table>
+		</div>
 
 	</mat-expansion-panel>
 
@@ -55,14 +78,14 @@
 		</mat-expansion-panel-header>
 
 		<!-- Table of Repos without Code.json file-->
-		<mat-table #table [dataSource]="dataSourceWithOutCode" matSort>
+		<mat-table #withoutCodeTable="matSort" [dataSource]="dataSourceWithOutCode" matSort>
 			<ng-container matColumnDef="name">
 				<mat-header-cell *matHeaderCellDef mat-sort-header>Repo Name</mat-header-cell>
 				<mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
 			</ng-container>
 			<ng-container matColumnDef="created_at">
 				<mat-header-cell *matHeaderCellDef mat-sort-header>Created Date</mat-header-cell>
-				<mat-cell *matCellDef="let element"> {{element.created_at}} </mat-cell>
+				<mat-cell *matCellDef="let element"> {{element.created_at | date: 'MM/dd/yyyy'}} </mat-cell>
 			</ng-container>
 			<ng-container matColumnDef="description">
 				<mat-header-cell *matHeaderCellDef mat-sort-header>Description</mat-header-cell>
@@ -73,5 +96,5 @@
 		</mat-table>
 
 	</mat-expansion-panel>
-	
+
 </mat-accordion>
