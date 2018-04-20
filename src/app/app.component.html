@@ -21,49 +21,49 @@
 				<!-- repo name -->
 				<ng-container matColumnDef="name">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Repo Name</mat-header-cell>
-					<mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+					<mat-cell *matCellDef="let repo"> {{repo.name}} </mat-cell>
 				</ng-container>
 
 				<!-- date repo created -->
 				<ng-container matColumnDef="created_at">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Created Date</mat-header-cell>
-					<mat-cell *matCellDef="let row"> {{row.created_at | date: 'MM/dd/yyyy'}} </mat-cell>
+					<mat-cell *matCellDef="let repo"> {{repo.created_at | date: 'MM/dd/yyyy'}} </mat-cell>
 				</ng-container>
 
 				<!-- description -->
 				<ng-container matColumnDef="description">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Description</mat-header-cell>
-					<mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
+					<mat-cell *matCellDef="let repo"> {{repo.description}} </mat-cell>
 				</ng-container>
 
 				<!-- homepage url -->
 				<ng-container matColumnDef="liveurl">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>URL</mat-header-cell>
-					<mat-cell *matCellDef="let row">
-						<a [href]="row.liveurl" target="_blank">{{row.liveurl}}</a>
+					<mat-cell *matCellDef="let repo">
+						<a [href]="repo.liveurl" target="_blank">{{repo.liveurl}}</a>
 					</mat-cell>
 				</ng-container>
 
 				<!-- contact person -->
 				<ng-container matColumnDef="contact">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Contact</mat-header-cell>
-					<mat-cell *matCellDef="let row"> {{row.contact}} </mat-cell>
+					<mat-cell *matCellDef="let repo"> {{repo.contact}} </mat-cell>
 				</ng-container>
 
 				<!-- status -->
 				<ng-container matColumnDef="status">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
-					<mat-cell *matCellDef="let row"> {{row.status}} </mat-cell>
+					<mat-cell *matCellDef="let repo"> {{repo.status}} </mat-cell>
 				</ng-container>
 
 				<!-- language -->
 				<ng-container matColumnDef="language">
-						<mat-header-cell *matHeaderCellDef mat-sort-header>Language</mat-header-cell>
-						<mat-cell *matCellDef="let row"> {{row.language}} </mat-cell>
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Language</mat-header-cell>
+					<mat-cell *matCellDef="let repo"> {{repo.language}} </mat-cell>
 				</ng-container>
 
 				<mat-header-row *matHeaderRowDef="displayedColumnsWith"></mat-header-row>
-				<mat-row *matRowDef="let row; columns: displayedColumnsWith;"></mat-row>
+				<mat-row *matRowDef="let repo; columns: displayedColumnsWith;"></mat-row>
 			</mat-table>
 		</div>
 
