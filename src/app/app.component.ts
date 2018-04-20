@@ -24,6 +24,8 @@ export class AppComponent implements OnInit, AfterViewChecked {
 	public dataSourceWithCode: MatTableDataSource<Irepo>;
 	public dataSourceWithOutCode: MatTableDataSource<Irepo>;
 
+	public countWithCode: any;
+
 	// public sortedData: any;
 
 	repoDataLoaded = false;
@@ -51,6 +53,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
 						// BAD 4/19/18: moved these up here to ensure they are being set after all data is in and set
 						this.dataSourceWithCode = new MatTableDataSource(this.ReposWithCodejson);
 						this.dataSourceWithCode.sort = this.withCodeTableSort;
+						this.countWithCode = this.ReposWithCodejson.length;
 					}, error => {
 						this.ReposWithOutCodejson.push(repo);
 						this.dataSourceWithOutCode = new MatTableDataSource(this.ReposWithOutCodejson);
@@ -74,6 +77,8 @@ export class AppComponent implements OnInit, AfterViewChecked {
 		filterValue = filterValue.trim(); // Remove whitespace
 		filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
 		this.dataSourceWithCode.filter = filterValue;
+		this.countWithCode = this.dataSourceWithCode.filteredData.length;
+		
 		//this.dataSourceWithCode.data = this.dataSourceWithCode.filteredData	//trying to get filter to set data
 	}
 }
