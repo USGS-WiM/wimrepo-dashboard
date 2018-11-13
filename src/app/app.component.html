@@ -1,5 +1,20 @@
 <h2>WIM Github Repository Dashboard</h2>
-<mat-accordion>
+<div class="container">
+	<nav class="navbar navbar-default">
+        <div class="navbar-header">
+          <a class="navbar-brand"></a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <a *ngIf="!authService.isLoggedIn" (click)="authService.login()">Log In</a>
+          </li>
+          <li>
+            <a (click)="authService.logout()" *ngIf="authService.isLoggedIn">Log Out</a>
+          </li>
+        </ul>
+      </nav>
+</div>
+<mat-accordion *ngIf="authService.isLoggedIn">
 
 	<mat-expansion-panel>
 		<mat-expansion-panel-header>
@@ -98,3 +113,4 @@
 	</mat-expansion-panel>
 
 </mat-accordion>
+<div><router-outlet></router-outlet></div>

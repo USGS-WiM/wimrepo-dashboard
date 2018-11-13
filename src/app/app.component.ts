@@ -3,6 +3,10 @@ import { ChangeDetectorRef } from '@angular/core';
 import { WIMRepoService } from './services/wimrepo.service';
 import { MatTableDataSource, MatSort } from '@angular/material';
 import { Irepo } from './interfaces/repo.interface';
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { AuthService } from './auth/auth.service';
+import { NgModule } from '@angular/core';
+import 'rxjs/Rx';
 
 @Component({
 	// tslint:disable:indent
@@ -30,7 +34,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
 
 	repoDataLoaded = false;
 
-	constructor(private _wimrepoService: WIMRepoService, private _cdr: ChangeDetectorRef) { }
+	constructor(private _wimrepoService: WIMRepoService, private _cdr: ChangeDetectorRef, public authService: AuthService) { }
 
 	ngOnInit() {
 		this.ReposWithCodejson = [];
@@ -61,8 +65,8 @@ export class AppComponent implements OnInit, AfterViewChecked {
 					});
 				});
 			});
-
-	}
+			
+}
 	// end ngOnInit()
 
 	ngAfterViewChecked() {
