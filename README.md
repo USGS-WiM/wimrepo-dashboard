@@ -38,7 +38,7 @@ ng serve to build and run the application.
 ## Deployment
 
 ```
-ng build -prod to build a dist folder
+ng build --prod --base-href to build a dist folder
 ```
 
 ## Built With

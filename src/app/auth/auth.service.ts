@@ -3,6 +3,10 @@ import { Injectable } from '@angular/core';
 import * as auth0 from 'auth0-js';
 import { environment } from './../../environments/environment';
 import { Router } from '@angular/router';
+import { Observable } from "rxjs/Observable"; 
+import 'rxjs/Rx';
+import { Subject } from "rxjs/Subject";
+import { HttpHeaders, HttpClient, HttpErrorResponse } from "@angular/common/http";
 
 (window as any).global = window;
 
@@ -25,6 +29,12 @@ export class AuthService {
 
   constructor(private router: Router) {
     this.getAccessToken();
+  }
+
+  private _tokenSubject: Subject<string> = new Subject<string>();
+
+  public get AccessTokenObs(): Observable<string> {
+    return this._tokenSubject.asObservable();
   }
 
   login() {
@@ -56,6 +66,7 @@ export class AuthService {
   getUserInfo(authResult) {
     // Use access token to retrieve user's profile and set session
     this.auth0.client.userInfo(authResult.accessToken, (err, profile) => {
+      console.log(this.auth0.client)
       if (profile) {
         this._setSession(authResult, profile);
       }
@@ -68,6 +79,8 @@ export class AuthService {
     this.accessToken = authResult.accessToken;
     this.userProfile = profile;
     this.authenticated = true;
+    console.log(this.userProfile);
+    console.log(authResult);
   }
 
   logout() {
@@ -75,7 +88,7 @@ export class AuthService {
     // Ensure that returnTo URL is specified in Auth0
     // Application settings for Allowed Logout URLs
     this.auth0.logout({
-      returnTo: 'http://localhost:4200',
+      returnTo: environment.auth.redirect,
       clientID: environment.auth.clientID
     });
   }

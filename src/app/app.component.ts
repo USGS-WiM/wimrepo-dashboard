@@ -1,12 +1,12 @@
-import { Component, ViewChild, OnInit, AfterViewInit, AfterViewChecked } from '@angular/core';
+import { Component, ViewChild, OnInit, AfterViewInit, AfterViewChecked, OnDestroy } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 import { WIMRepoService } from './services/wimrepo.service';
 import { MatTableDataSource, MatSort } from '@angular/material';
 import { Irepo } from './interfaces/repo.interface';
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { AuthService } from './auth/auth.service';
 import { NgModule } from '@angular/core';
-import 'rxjs/Rx';
+import { Subject } from "rxjs/Subject";
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
 	// tslint:disable:indent
@@ -28,7 +28,8 @@ export class AppComponent implements OnInit, AfterViewChecked {
 	public dataSourceWithCode: MatTableDataSource<Irepo>;
 	public dataSourceWithOutCode: MatTableDataSource<Irepo>;
 
-	public countWithCode: any;
+	public countWithCode = 0;
+	private subscription: Subscription;
 
 	// public sortedData: any;
 
@@ -37,6 +38,36 @@ export class AppComponent implements OnInit, AfterViewChecked {
 	constructor(private _wimrepoService: WIMRepoService, private _cdr: ChangeDetectorRef, public authService: AuthService) { }
 
 	ngOnInit() {
+		this.ReposWithCodejson = [];
+		this.ReposWithOutCodejson = [];
+		this.authService.AccessTokenObs.subscribe((accessToken: string) => {
+			if (accessToken) {
+				this._wimrepoService.getRepos();
+				this.getRepos();
+			}
+		});
+	}
+	// end ngOnInit()
+
+	ngAfterViewChecked() {
+		// this.dataSourceWithCode = new MatTableDataSource(this.ReposWithCodejson);
+		// this.dataSourceWithCode.sort = this.withCodeTableSort;
+		// this.dataSourceWithOutCode = new MatTableDataSource(this.ReposWithOutCodejson);
+		// this.dataSourceWithOutCode.sort = this.withoutCodeTableSort;
+		//this._cdr.detectChanges(); // fixes ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked
+	}
+
+	public applyFilter(filterValue: string) {
+		filterValue = filterValue.trim(); // Remove whitespace
+		filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+		this.dataSourceWithCode.filter = filterValue;
+		this.countWithCode = this.dataSourceWithCode.filteredData.length;
+		
+		//this.dataSourceWithCode.data = this.dataSourceWithCode.filteredData	//trying to get filter to set data
+	}
+
+	public getRepos() {
+		this._wimrepoService.getRepos();
 		this.ReposWithCodejson = [];
 		this.ReposWithOutCodejson = [];
 
@@ -65,24 +96,10 @@ export class AppComponent implements OnInit, AfterViewChecked {
 					});
 				});
 			});
-			
-}
-	// end ngOnInit()
 
-	ngAfterViewChecked() {
-		// this.dataSourceWithCode = new MatTableDataSource(this.ReposWithCodejson);
-		// this.dataSourceWithCode.sort = this.withCodeTableSort;
-		// this.dataSourceWithOutCode = new MatTableDataSource(this.ReposWithOutCodejson);
-		// this.dataSourceWithOutCode.sort = this.withoutCodeTableSort;
-		//this._cdr.detectChanges(); // fixes ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked
 	}
 
-	public applyFilter(filterValue: string) {
-		filterValue = filterValue.trim(); // Remove whitespace
-		filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
-		this.dataSourceWithCode.filter = filterValue;
-		this.countWithCode = this.dataSourceWithCode.filteredData.length;
-		
-		//this.dataSourceWithCode.data = this.dataSourceWithCode.filteredData	//trying to get filter to set data
+	ngOnDestroy() {
+		this.subscription.unsubscribe();
 	}
 }

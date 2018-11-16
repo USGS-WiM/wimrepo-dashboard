@@ -6,7 +6,7 @@
 
 import { Injectable } from '@angular/core';
 import { Http, Response, RequestOptions, URLSearchParams } from "@angular/http";
-import { HttpHeaders, HttpClient, HttpErrorResponse } from "@angular/common/http"
+import { HttpHeaders, HttpClient } from "@angular/common/http";
 import { BehaviorSubject } from 'rxjs';
 import { Subject } from "rxjs/Subject";
 import { Observable } from "rxjs/Observable";
@@ -25,7 +25,6 @@ export class WIMRepoService {
     private repoList2: Array<Irepo>;
 
     constructor(private _http: HttpClient, private authService: AuthService) {
-        this.getRepos();
     }
 
     private _repoListSubject: Subject<Array<Irepo>> = new Subject<Array<Irepo>>();
@@ -36,9 +35,10 @@ export class WIMRepoService {
     }
 
     // get all the repos (called from constructor)
-    private getRepos() {
+    public getRepos() {
+        let head = new HttpHeaders().set('Authorization', this.authService.accessToken);
         // need to request the repos in 2 separate calls due to limits on # of repos returned. using '?page=1&per_page=100'
-        this._http.get(CONFIG.GETREPOS1_URL, {headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.accessToken}`)})
+        this._http.get(CONFIG.GETREPOS1_URL, {headers: head})
             .map(res => <Array<Irepo>>res)
             .catch((err, caught) => this.handleError(err, caught))
             .subscribe(p => {
@@ -50,7 +50,7 @@ export class WIMRepoService {
                 }
             });
         // need to request the repos in 2 separate calls due to limits on # of repos returned. using '?page=2&per_page=100'
-        this._http.get(CONFIG.GETREPOS2_URL, {headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.accessToken}`)})
+        this._http.get(CONFIG.GETREPOS2_URL, {headers: head})
             .map(res => <Array<Irepo>>res)
             .catch((err, caught) => this.handleError(err, caught))
             .subscribe(p => {
@@ -65,8 +65,8 @@ export class WIMRepoService {
 
     // get each repo's code.json file (called from the app.component.ts subscription to RepoList() )
     public getRepoCodejson(repoName): Observable<Icodejson> {
-        let options = new RequestOptions({ headers: CONFIG.JSON_HEADERS });
-        return this._http.get(CONFIG.GETREPO_CODE_URL + repoName + "/contents/code.json", {headers: new HttpHeaders().set('Authorization', `Bearer ${this.authService.accessToken}`)})
+        let head = new HttpHeaders().set('Authorization', this.authService.accessToken);
+        return this._http.get(CONFIG.GETREPO_CODE_URL + repoName + "/contents/code.json", {headers: head})
             .map((response: Response) => <Icodejson>response.json())
             .catch((err, caught) => this.handleError(err, caught));
     }
