@@ -1,20 +1,12 @@
 <h2>WIM Github Repository Dashboard</h2>
 <div class="container">
-	<nav class="navbar navbar-default">
-        <div class="navbar-header">
-          <a class="navbar-brand"></a>
-        </div>
-        <ul class="nav navbar-nav navbar-right">
-          <li>
-            <a *ngIf="!authService.isLoggedIn" (click)="authService.login()">Log In</a>
-          </li>
-          <li>
-            <a (click)="authService.logout()" *ngIf="authService.isLoggedIn">Log Out</a>
-          </li>
-        </ul>
-      </nav>
+	<div *ngIf="!isLoggedIn" class="login">
+		Username:<input id="userInput" placeholder="Username"><br>
+		Password:<input type="password" id="passInput" placeholder="Password"><br>
+		<a (click)="login()">Log In</a>
+	</div>
 </div>
-<mat-accordion *ngIf="authService.isLoggedIn">
+<mat-accordion *ngIf="isLoggedIn">
 
 	<mat-expansion-panel>
 		<mat-expansion-panel-header>
@@ -113,4 +105,3 @@
 	</mat-expansion-panel>
 
 </mat-accordion>
-<div><router-outlet></router-outlet></div>

@@ -5,8 +5,7 @@
 // purpose:     Service for retrieving github api endpoints (repos and each repo's code.json file)
 
 import { Injectable } from '@angular/core';
-import { Http, Response, RequestOptions, URLSearchParams } from "@angular/http";
-import { HttpHeaders, HttpClient } from "@angular/common/http";
+import { Http, Response, RequestOptions, URLSearchParams, Headers } from "@angular/http";
 import { BehaviorSubject } from 'rxjs';
 import { Subject } from "rxjs/Subject";
 import { Observable } from "rxjs/Observable";
@@ -16,7 +15,6 @@ import 'rxjs/add/observable/throw';
 import { CONFIG } from "./config";
 import { Irepo } from '../interfaces/repo.interface';
 import { Icodejson } from '../interfaces/code.interface';
-import { AuthService } from '../auth/auth.service';
 
 
 @Injectable()
@@ -24,8 +22,7 @@ export class WIMRepoService {
     private repoList1: Array<Irepo>;
     private repoList2: Array<Irepo>;
 
-    constructor(private _http: HttpClient, private authService: AuthService) {
-    }
+    constructor(private _http: Http) {}
 
     private _repoListSubject: Subject<Array<Irepo>> = new Subject<Array<Irepo>>();
     // getter: subscribed to from app.component.ts (sends every time the _repoListSubject gets updated - which is only once upon initial load)
@@ -35,11 +32,12 @@ export class WIMRepoService {
     }
 
     // get all the repos (called from constructor)
-    public getRepos() {
-        let head = new HttpHeaders().set('Authorization', this.authService.accessToken);
+    public getRepos(user, pass) {
+        let JSON_HEADERS = new Headers({ "Accept": "application/json", "Authorization": "Basic " + btoa(user + ":" + pass) });
+        let options = new RequestOptions({ headers: JSON_HEADERS });
         // need to request the repos in 2 separate calls due to limits on # of repos returned. using '?page=1&per_page=100'
-        this._http.get(CONFIG.GETREPOS1_URL, {headers: head})
-            .map(res => <Array<Irepo>>res)
+        this._http.get(CONFIG.GETREPOS1_URL, options)
+            .map(res => <Array<Irepo>>res.json())
             .catch((err, caught) => this.handleError(err, caught))
             .subscribe(p => {
                 this.repoList1 = p;
@@ -50,8 +48,8 @@ export class WIMRepoService {
                 }
             });
         // need to request the repos in 2 separate calls due to limits on # of repos returned. using '?page=2&per_page=100'
-        this._http.get(CONFIG.GETREPOS2_URL, {headers: head})
-            .map(res => <Array<Irepo>>res)
+        this._http.get(CONFIG.GETREPOS2_URL, options)
+            .map(res => <Array<Irepo>>res.json())
             .catch((err, caught) => this.handleError(err, caught))
             .subscribe(p => {
                 this.repoList2 = p;
@@ -64,9 +62,10 @@ export class WIMRepoService {
     }
 
     // get each repo's code.json file (called from the app.component.ts subscription to RepoList() )
-    public getRepoCodejson(repoName): Observable<Icodejson> {
-        let head = new HttpHeaders().set('Authorization', this.authService.accessToken);
-        return this._http.get(CONFIG.GETREPO_CODE_URL + repoName + "/contents/code.json", {headers: head})
+    public getRepoCodejson(repoName, user, pass): Observable<Icodejson> {
+        let JSON_HEADERS = new Headers({ "Accept": "application/json", "Authorization": "Basic " + btoa(user + ":" + pass) });
+        let options = new RequestOptions({ headers: JSON_HEADERS });
+        return this._http.get(CONFIG.GETREPO_CODE_URL + repoName + "/contents/code.json", options)
             .map((response: Response) => <Icodejson>response.json())
             .catch((err, caught) => this.handleError(err, caught));
     }

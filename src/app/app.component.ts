@@ -1,12 +1,8 @@
-import { Component, ViewChild, OnInit, AfterViewInit, AfterViewChecked, OnDestroy } from '@angular/core';
+import { Component, ViewChild, OnInit, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 import { WIMRepoService } from './services/wimrepo.service';
 import { MatTableDataSource, MatSort } from '@angular/material';
 import { Irepo } from './interfaces/repo.interface';
-import { AuthService } from './auth/auth.service';
-import { NgModule } from '@angular/core';
-import { Subject } from "rxjs/Subject";
-import { Subscription } from 'rxjs/Subscription';
 
 @Component({
 	// tslint:disable:indent
@@ -29,23 +25,22 @@ export class AppComponent implements OnInit, AfterViewChecked {
 	public dataSourceWithOutCode: MatTableDataSource<Irepo>;
 
 	public countWithCode = 0;
-	private subscription: Subscription;
+
+	public userInput;
+	public passInput;
+
+	public isLoggedIn = false;
 
 	// public sortedData: any;
 
 	repoDataLoaded = false;
 
-	constructor(private _wimrepoService: WIMRepoService, private _cdr: ChangeDetectorRef, public authService: AuthService) { }
+	constructor(private _wimrepoService: WIMRepoService, private _cdr: ChangeDetectorRef) { }
 
 	ngOnInit() {
 		this.ReposWithCodejson = [];
 		this.ReposWithOutCodejson = [];
-		this.authService.AccessTokenObs.subscribe((accessToken: string) => {
-			if (accessToken) {
-				this._wimrepoService.getRepos();
-				this.getRepos();
-			}
-		});
+
 	}
 	// end ngOnInit()
 
@@ -67,7 +62,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
 	}
 
 	public getRepos() {
-		this._wimrepoService.getRepos();
+		this._wimrepoService.getRepos(this.userInput, this.passInput);
 		this.ReposWithCodejson = [];
 		this.ReposWithOutCodejson = [];
 
@@ -77,7 +72,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
 				let index = 0;
 				repos.forEach(repo => {
 					index++;
-					this._wimrepoService.getRepoCodejson(repo.name).subscribe(code => {
+					this._wimrepoService.getRepoCodejson(repo.name, this.userInput, this.passInput).subscribe(code => {
 						let decodedContent = atob(code.content);
 						let jsonContent = JSON.parse(decodedContent);
 						repo.status = jsonContent[0].status;
@@ -99,7 +94,12 @@ export class AppComponent implements OnInit, AfterViewChecked {
 
 	}
 
-	ngOnDestroy() {
-		this.subscription.unsubscribe();
+	public login() {
+		this.userInput = (<HTMLInputElement>document.getElementById('userInput')).value;
+		this.passInput = (<HTMLInputElement>document.getElementById('passInput')).value;
+		this.ReposWithCodejson = [];
+		this.ReposWithOutCodejson = [];
+		this.getRepos();
+		this.isLoggedIn = true;
 	}
 }
