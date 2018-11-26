@@ -30,6 +30,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
 	public passInput;
 
 	public isLoggedIn = false;
+	public errorMessage = false;
 
 	// public sortedData: any;
 
@@ -97,9 +98,27 @@ export class AppComponent implements OnInit, AfterViewChecked {
 	public login() {
 		this.userInput = (<HTMLInputElement>document.getElementById('userInput')).value;
 		this.passInput = (<HTMLInputElement>document.getElementById('passInput')).value;
-		this.ReposWithCodejson = [];
-		this.ReposWithOutCodejson = [];
-		this.getRepos();
-		this.isLoggedIn = true;
+
+		if (this.userInput && this.passInput) {
+			this.ReposWithCodejson = [];
+			this.ReposWithOutCodejson = [];
+			this.getRepos();
+		} else {
+			this.isLoggedIn = false;
+		}
+
+		this._wimrepoService.ErrorMsgObs.subscribe((errMsg: string) => {
+			if (errMsg.includes('401')) {
+				this.isLoggedIn = false;
+			this.errorMessage = true;
+			} else {
+				this.isLoggedIn = true;
+				this.errorMessage = false;
+			}
+		});
+	}
+
+	public logout() {
+		this.isLoggedIn = false;
 	}
 }

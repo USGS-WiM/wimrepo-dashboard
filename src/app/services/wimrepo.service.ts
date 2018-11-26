@@ -31,6 +31,11 @@ export class WIMRepoService {
         return this._repoListSubject.asObservable();
     }
 
+    public _errorMsgSubject: Subject<string> = new Subject<string>();
+    public get ErrorMsgObs(): Observable<string> {
+        return this._errorMsgSubject.asObservable();
+    }
+
     // get all the repos (called from constructor)
     public getRepos(user, pass) {
         let JSON_HEADERS = new Headers({ "Accept": "application/json", "Authorization": "Basic " + btoa(user + ":" + pass) });
@@ -75,6 +80,7 @@ export class WIMRepoService {
         let errMsg = (error.message) ? error.message :
             error.status ? `${error.status} - ${error.statusText}` : 'Server error';
         console.log(errMsg);
+        this._errorMsgSubject.next(errMsg);
         return Observable.throw(errMsg);
     }
 }
