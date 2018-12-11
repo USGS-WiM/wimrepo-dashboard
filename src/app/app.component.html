@@ -1,7 +1,7 @@
 <div><h2>WIM Github Repository Dashboard</h2>
-	<div *ngIf="isLoggedIn" class="logout">
+	<!--<div *ngIf="isLoggedIn" class="logout">
 			<button (click)="logout()">Log Out</button>
-	</div>
+	</div>-->
 </div>
 <div class="container">
 	<div *ngIf="!isLoggedIn" class="login">
@@ -105,6 +105,47 @@
 			</ng-container>
 			<mat-header-row *matHeaderRowDef="displayedColumnsWithOut"></mat-header-row>
 			<mat-row *matRowDef="let row; columns: displayedColumnsWithOut;"></mat-row>
+		</mat-table>
+
+	</mat-expansion-panel>
+	<mat-expansion-panel>
+		<mat-expansion-panel-header>
+			<mat-panel-title>Repos with Vulnerabilities</mat-panel-title>
+			<mat-panel-description>
+				Count: {{countWithVuln}}
+			</mat-panel-description>
+		</mat-expansion-panel-header>
+
+		<div class="example-header">
+			<mat-form-field>
+				<input matInput (keyup)="applyVulnFilter($event.target.value)" placeholder="Filter">
+			</mat-form-field>
+		</div>
+
+		<!-- Table of Repos without Code.json file-->
+		<mat-table #vulnTable="matSort" [dataSource]="dataSourceVuln" matSort>
+			<ng-container matColumnDef="name">
+				<mat-header-cell *matHeaderCellDef mat-sort-header>Repo Name</mat-header-cell>
+				<mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+			</ng-container>
+			<ng-container matColumnDef="vulnerabilityAlerts">
+				<mat-header-cell *matHeaderCellDef mat-sort-header>Number of Vulnerabilities</mat-header-cell>
+				<mat-cell *matCellDef="let element"> {{element.vulnerabilityAlerts}} </mat-cell>
+			</ng-container>
+			<ng-container matColumnDef="vulnerablePackages">
+				<mat-header-cell *matHeaderCellDef mat-sort-header>Packages</mat-header-cell>
+				<mat-cell *matCellDef="let element"> {{element.packages}} </mat-cell>
+			</ng-container>
+			<ng-container matColumnDef="affectedRange">
+				<mat-header-cell *matHeaderCellDef mat-sort-header>Affected Version(s)</mat-header-cell>
+				<mat-cell *matCellDef="let element"> {{element.affectedRange}} </mat-cell>
+			</ng-container>
+			<ng-container matColumnDef="fixedIn">
+				<mat-header-cell *matHeaderCellDef mat-sort-header>Fixed Version(s)</mat-header-cell>
+				<mat-cell *matCellDef="let element"> {{element.fixedIn}} </mat-cell>
+			</ng-container>
+			<mat-header-row *matHeaderRowDef="displayedColumnsVuln"></mat-header-row>
+			<mat-row *matRowDef="let row; columns: displayedColumnsVuln;"></mat-row>
 		</mat-table>
 
 	</mat-expansion-panel>
