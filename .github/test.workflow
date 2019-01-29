@@ -9,7 +9,8 @@ action "Filters for GitHub Actions" {
 }
 
 action "Create an issue" {
-  uses = "JasonEtco/create-an-issue@test-github-actions"
+  uses = "JasonEtco/create-an-issue@master"
   needs = ["Filters for GitHub Actions"]
   args = ".github/test-issue-template.md"
+  secrets = ["GITHUB_TOKEN"]
 }
