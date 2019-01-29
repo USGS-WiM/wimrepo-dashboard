@@ -1,8 +1,9 @@
-<div><h2>WIM Github Repository Dashboard</h2>
+<span id="navbar">
+	<h2 class="nav-title">WIM Github Repository Dashboard</h2>
 	<!--<div *ngIf="isLoggedIn" class="logout">
 			<button (click)="logout()">Log Out</button>
 	</div>-->
-</div>
+</span>
 <div class="container">
 	<div *ngIf="!isLoggedIn" class="login">
 			<div *ngIf="errorMessage" id="errorMessage">Username or Password is incorrect.</div>
@@ -11,9 +12,9 @@
 			<button (click)="login()">Log In</button>
 	</div>
 </div>
-<mat-accordion *ngIf="isLoggedIn">
+<mat-accordion *ngIf="isLoggedIn" >
 
-	<mat-expansion-panel>
+	<mat-expansion-panel id="repoAccordion">
 		<mat-expansion-panel-header>
 			<mat-panel-title>Repos with Code.json file</mat-panel-title>
 			<mat-panel-description>
@@ -134,15 +135,27 @@
 			</ng-container>
 			<ng-container matColumnDef="vulnerablePackages">
 				<mat-header-cell *matHeaderCellDef mat-sort-header>Packages</mat-header-cell>
-				<mat-cell *matCellDef="let element"> {{element.packages}} </mat-cell>
+				<mat-cell *matCellDef="let element"> 
+						<mat-cell *ngFor="let pack of element.packages">
+							{{pack.name}}<br>
+						</mat-cell>
+					</mat-cell>
 			</ng-container>
 			<ng-container matColumnDef="affectedRange">
 				<mat-header-cell *matHeaderCellDef mat-sort-header>Affected Version(s)</mat-header-cell>
-				<mat-cell *matCellDef="let element"> {{element.affectedRange}} </mat-cell>
+				<mat-cell *matCellDef="let element"> 
+					<mat-cell *ngFor="let pack of element.packages">
+						{{pack.affectedRange}}<br>
+					</mat-cell>
+				</mat-cell>
 			</ng-container>
 			<ng-container matColumnDef="fixedIn">
 				<mat-header-cell *matHeaderCellDef mat-sort-header>Fixed Version(s)</mat-header-cell>
-				<mat-cell *matCellDef="let element"> {{element.fixedIn}} </mat-cell>
+				<mat-cell *matCellDef="let element"> 
+						<mat-cell *ngFor="let pack of element.packages">
+							{{pack.fixedIn}}<br>
+						</mat-cell>
+					</mat-cell>
 			</ng-container>
 			<mat-header-row *matHeaderRowDef="displayedColumnsVuln"></mat-header-row>
 			<mat-row *matRowDef="let row; columns: displayedColumnsVuln;"></mat-row>

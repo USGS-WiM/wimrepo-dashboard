@@ -157,24 +157,32 @@ export class WIMRepoService {
         const nodes = data['organization']['repositories']['nodes'];
         let vulnAlerts;
         for (const node in nodes) {
-            vulnAlerts = nodes[node].vulnerabilityAlerts.totalCount;
-            if (vulnAlerts > 0 && !(this.repoNames.indexOf(nodes[node].name) !== -1)) {
-                const newVulnRepo = { name: '', vulnerabilityAlerts: 0, packages: '' , affectedRange: '', fixedIn: ''};
-                newVulnRepo.name = nodes[node].name;
-                this.repoNames.push(nodes[node].name);
-                newVulnRepo.vulnerabilityAlerts = vulnAlerts;
-                const vulnPackages = []; const affectedRange = []; const fixedIn = [];
-                for (const pkg in nodes[node].vulnerabilityAlerts.nodes) {
-                    if (pkg) {
-                        vulnPackages.push(nodes[node].vulnerabilityAlerts.nodes[pkg].packageName);
-                        affectedRange.push(nodes[node].vulnerabilityAlerts.nodes[pkg].affectedRange);
-                        fixedIn.push(nodes[node].vulnerabilityAlerts.nodes[pkg].fixedIn);
+            if (this) {
+                vulnAlerts = nodes[node].vulnerabilityAlerts.totalCount;
+                if (vulnAlerts > 0 && !(this.repoNames.indexOf(nodes[node].name) !== -1)) {
+                    const newVulnRepo = { name: '', vulnerabilityAlerts: 0, packages: [] };
+                    newVulnRepo.name = nodes[node].name;
+                    this.repoNames.push(nodes[node].name);
+                    newVulnRepo.vulnerabilityAlerts = vulnAlerts;
+                    let i = 0;
+                    for (const pkg in nodes[node].vulnerabilityAlerts.nodes) {
+                        if (pkg) {
+                            const pack = {name: '', affectedRange: '', fixedIn: ''};
+                            if (nodes[node].vulnerabilityAlerts.nodes[pkg].packageName) {
+                                pack.name = nodes[node].vulnerabilityAlerts.nodes[pkg].packageName;
+                            }
+                            if (nodes[node].vulnerabilityAlerts.nodes[pkg].affectedRange) {
+                                pack.affectedRange = nodes[node].vulnerabilityAlerts.nodes[pkg].affectedRange;
+                            }
+                            if (nodes[node].vulnerabilityAlerts.nodes[pkg].fixedIn) {
+                                pack.fixedIn = nodes[node].vulnerabilityAlerts.nodes[pkg].fixedIn;
+                            }
+                            newVulnRepo.packages.push(pack);
+                            i++;
+                        }
                     }
+                    this.reposWithVulnerabilities.push(newVulnRepo);
                 }
-                newVulnRepo.packages = vulnPackages.join(', ');
-                newVulnRepo.affectedRange = affectedRange.join(', ');
-                newVulnRepo.fixedIn = fixedIn.join(', ');
-                this.reposWithVulnerabilities.push(newVulnRepo);
             }
         }
     }
