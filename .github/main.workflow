@@ -1,9 +1,10 @@
 workflow "New workflow" {
   on = "push"
-  resolves = ["Create an issue"]
+  resolves = ["Comment on New Issue"]
 }
 
-action "Create an issue" {
-  uses = "JasonEtco/create-an-issue@master"
+action "Comment on New Issue" {
+  uses = "waffleio/gh-actions/action-commitissuecommenter@master"
   secrets = ["GITHUB_TOKEN"]
+  args = "Thanks for creating an issue!"
 }
