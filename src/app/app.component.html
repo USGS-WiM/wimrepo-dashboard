@@ -134,7 +134,7 @@
 				<mat-cell *matCellDef="let element"> {{element.vulnerabilityAlerts}} </mat-cell>
 			</ng-container>
 			<ng-container matColumnDef="vulnerablePackages">
-				<mat-header-cell *matHeaderCellDef mat-sort-header>Packages</mat-header-cell>
+				<mat-header-cell *matHeaderCellDef>Packages</mat-header-cell>
 				<mat-cell *matCellDef="let element"> 
 						<mat-cell *ngFor="let pack of element.packages">
 							{{pack.name}}<br>
@@ -142,7 +142,7 @@
 					</mat-cell>
 			</ng-container>
 			<ng-container matColumnDef="affectedRange">
-				<mat-header-cell *matHeaderCellDef mat-sort-header>Affected Version(s)</mat-header-cell>
+				<mat-header-cell *matHeaderCellDef>Affected Version(s)</mat-header-cell>
 				<mat-cell *matCellDef="let element"> 
 					<mat-cell *ngFor="let pack of element.packages">
 						{{pack.affectedRange}}<br>
@@ -150,7 +150,7 @@
 				</mat-cell>
 			</ng-container>
 			<ng-container matColumnDef="fixedIn">
-				<mat-header-cell *matHeaderCellDef mat-sort-header>Fixed Version(s)</mat-header-cell>
+				<mat-header-cell *matHeaderCellDef>Fixed Version(s)</mat-header-cell>
 				<mat-cell *matCellDef="let element"> 
 						<mat-cell *ngFor="let pack of element.packages">
 							{{pack.fixedIn}}<br>

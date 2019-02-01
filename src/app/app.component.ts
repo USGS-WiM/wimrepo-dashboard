@@ -72,7 +72,23 @@ export class AppComponent implements OnInit, AfterViewChecked {
 			this.ReposWithVulnerabilities = repoList;
 			this.countWithVuln = Object.keys(repoList).length;
 			this.dataSourceVuln = new MatTableDataSource(this.ReposWithVulnerabilities);
+			this.dataSourceVuln.sortingDataAccessor = (data, sortHeaderId) => {
+				if (typeof data[sortHeaderId] === 'string') {
+					return data[sortHeaderId].toLocaleLowerCase();
+				} else {
+					return data[sortHeaderId];
+				}
+			};
 			this.dataSourceVuln.sort = this.vulnTableSort;
+			this.dataSourceVuln.filterPredicate = (data, filter: string)  => {
+				const accumulator = (currentTerm, key) => {
+				  return this.nestedFilterCheck(currentTerm, data, key);
+				};
+				const dataStr = Object.keys(data).reduce(accumulator, '').toLowerCase();
+				// Transform the filter by converting it to lowercase and removing whitespace.
+				const transformedFilter = filter.trim().toLowerCase();
+				return dataStr.indexOf(transformedFilter) !== -1;
+			  };
 		});
 		this._wimrepoService.getRepos(this.userInput, this.passInput);
 		this.ReposWithCodejson = [];
@@ -94,11 +110,13 @@ export class AppComponent implements OnInit, AfterViewChecked {
 
 						// BAD 4/19/18: moved these up here to ensure they are being set after all data is in and set
 						this.dataSourceWithCode = new MatTableDataSource(this.ReposWithCodejson);
+						this.dataSourceWithCode.sortingDataAccessor = (data, sortHeaderId) => data[sortHeaderId].toLocaleLowerCase();
 						this.dataSourceWithCode.sort = this.withCodeTableSort;
 						this.countWithCode = this.ReposWithCodejson.length;
 					}, error => {
 						this.ReposWithOutCodejson.push(repo);
 						this.dataSourceWithOutCode = new MatTableDataSource(this.ReposWithOutCodejson);
+						this.dataSourceWithOutCode.sortingDataAccessor = (data, sortHeaderId) => data[sortHeaderId].toLocaleLowerCase();
 						this.dataSourceWithOutCode.sort = this.withoutCodeTableSort;
 					});
 				});
@@ -141,8 +159,20 @@ export class AppComponent implements OnInit, AfterViewChecked {
 		filterValue = filterValue.trim(); // Remove whitespace
 		filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
 		this.dataSourceVuln.filter = filterValue;
-		this.countWithVuln = this.dataSourceWithCode.filteredData.length;
+		this.countWithVuln = this.dataSourceVuln.filteredData.length;
 
 		// this.dataSourceWithCode.data = this.dataSourceWithCode.filteredDat
 	}
+	public nestedFilterCheck(search, data, key) {
+		if (typeof data[key] === 'object') {
+		  for (const k in data[key]) {
+			if (data[key][k] !== null) {
+			  search = this.nestedFilterCheck(search, data[key], k);
+			}
+		  }
+		} else {
+		  search += data[key];
+		}
+		return search;
+	  }
 }
