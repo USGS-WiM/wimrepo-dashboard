@@ -1,22 +1,20 @@
-<h2>WIM Github Repository Dashboard</h2>
-<div class="container">
-	<nav class="navbar navbar-default">
-        <div class="navbar-header">
-          <a class="navbar-brand"></a>
-        </div>
-        <ul class="nav navbar-nav navbar-right">
-          <li>
-            <a *ngIf="!authService.isLoggedIn" (click)="authService.login()">Log In</a>
-          </li>
-          <li>
-            <a (click)="authService.logout()" *ngIf="authService.isLoggedIn">Log Out</a>
-          </li>
-        </ul>
-      </nav>
+<nav class="nav-main">
+	<span class="nav-brand full-only"><img src="assets/wimvector.png">Web Informatics and Mapping Repository Dashboard</span>
+</nav>
+	<!--<div *ngIf="isLoggedIn" class="logout">
+			<button (click)="logout()">Log Out</button>
+	</div>-->
+<div class="loginContainer">
+	<div *ngIf="!isLoggedIn" class="login">
+			<div *ngIf="errorMessage" id="errorMessage">Username or Password is incorrect.</div>
+			<label>Username:</label><input id="userInput" placeholder="Username"><br>
+			<label>Password:</label><input type="password" id="passInput" placeholder="Password"><br>
+			<button (click)="login()">Log In</button>
+	</div>
 </div>
-<mat-accordion *ngIf="authService.isLoggedIn">
+<mat-accordion *ngIf="isLoggedIn" >
 
-	<mat-expansion-panel>
+	<mat-expansion-panel id="repoAccordion">
 		<mat-expansion-panel-header>
 			<mat-panel-title>Repos with Code.json file</mat-panel-title>
 			<mat-panel-description>
@@ -111,6 +109,58 @@
 		</mat-table>
 
 	</mat-expansion-panel>
+	<mat-expansion-panel>
+		<mat-expansion-panel-header>
+			<mat-panel-title>Repos with Vulnerabilities</mat-panel-title>
+			<mat-panel-description>
+				Count: {{countWithVuln}}
+			</mat-panel-description>
+		</mat-expansion-panel-header>
+
+		<div class="example-header">
+			<mat-form-field>
+				<input matInput (keyup)="applyVulnFilter($event.target.value)" placeholder="Filter">
+			</mat-form-field>
+		</div>
+
+		<!-- Table of Repos without Code.json file-->
+		<mat-table #vulnTable="matSort" [dataSource]="dataSourceVuln" matSort>
+			<ng-container matColumnDef="name">
+				<mat-header-cell *matHeaderCellDef mat-sort-header>Repo Name</mat-header-cell>
+				<mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+			</ng-container>
+			<ng-container matColumnDef="vulnerabilityAlerts">
+				<mat-header-cell *matHeaderCellDef mat-sort-header>Number of Vulnerabilities</mat-header-cell>
+				<mat-cell *matCellDef="let element"> {{element.vulnerabilityAlerts}} </mat-cell>
+			</ng-container>
+			<ng-container matColumnDef="vulnerablePackages">
+				<mat-header-cell *matHeaderCellDef>Packages</mat-header-cell>
+				<mat-cell *matCellDef="let element"> 
+						<mat-cell *ngFor="let pack of element.packages">
+							{{pack.name}}<br>
+						</mat-cell>
+					</mat-cell>
+			</ng-container>
+			<ng-container matColumnDef="affectedRange">
+				<mat-header-cell *matHeaderCellDef>Affected Version(s)</mat-header-cell>
+				<mat-cell *matCellDef="let element"> 
+					<mat-cell *ngFor="let pack of element.packages">
+						{{pack.affectedRange}}<br>
+					</mat-cell>
+				</mat-cell>
+			</ng-container>
+			<ng-container matColumnDef="fixedIn">
+				<mat-header-cell *matHeaderCellDef>Fixed Version(s)</mat-header-cell>
+				<mat-cell *matCellDef="let element"> 
+						<mat-cell *ngFor="let pack of element.packages">
+							{{pack.fixedIn}}<br>
+						</mat-cell>
+					</mat-cell>
+			</ng-container>
+			<mat-header-row *matHeaderRowDef="displayedColumnsVuln"></mat-header-row>
+			<mat-row *matRowDef="let row; columns: displayedColumnsVuln;"></mat-row>
+		</mat-table>
+
+	</mat-expansion-panel>
 
 </mat-accordion>
-<div><router-outlet></router-outlet></div>

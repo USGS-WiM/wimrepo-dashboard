@@ -12,6 +12,15 @@ Both the CLI and generated project have dependencies that require Node 6.9.0 or 
 ```
 npm install -g @angular/cli
 ```
+You will need a Github Token to login to the site. Use your Github username, and [create a token](https://github.com/settings/tokens/new) for the password. Choose the following scopes:
+```
+repo
+read:org
+read:public_key
+read:repo_hook
+user
+read:gph_key
+```
 
 ## Getting Started
 
