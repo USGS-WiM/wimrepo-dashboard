@@ -110,13 +110,25 @@ export class AppComponent implements OnInit, AfterViewChecked {
 
 						// BAD 4/19/18: moved these up here to ensure they are being set after all data is in and set
 						this.dataSourceWithCode = new MatTableDataSource(this.ReposWithCodejson);
-						this.dataSourceWithCode.sortingDataAccessor = (data, sortHeaderId) => data[sortHeaderId].toLocaleLowerCase();
+						this.dataSourceWithCode.sortingDataAccessor = (data, sortHeaderId) => {
+							if (typeof data[sortHeaderId] === 'string') {
+								return data[sortHeaderId].toLocaleLowerCase();
+							} else {
+								return data[sortHeaderId];
+							}
+						};
 						this.dataSourceWithCode.sort = this.withCodeTableSort;
 						this.countWithCode = this.ReposWithCodejson.length;
 					}, error => {
 						this.ReposWithOutCodejson.push(repo);
 						this.dataSourceWithOutCode = new MatTableDataSource(this.ReposWithOutCodejson);
-						this.dataSourceWithOutCode.sortingDataAccessor = (data, sortHeaderId) => data[sortHeaderId].toLocaleLowerCase();
+						this.dataSourceWithOutCode.sortingDataAccessor = (data, sortHeaderId) => {
+							if (typeof data[sortHeaderId] === 'string') {
+								return data[sortHeaderId].toLocaleLowerCase();
+							} else {
+								return data[sortHeaderId];
+							}
+						};
 						this.dataSourceWithOutCode.sort = this.withoutCodeTableSort;
 					});
 				});

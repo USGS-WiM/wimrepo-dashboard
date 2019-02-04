@@ -1,10 +1,10 @@
-<span id="navbar">
-	<h2 class="nav-title">WIM Github Repository Dashboard</h2>
+<nav class="nav-main">
+	<span class="nav-brand full-only"><img src="assets/wimvector.png">Web Informatics and Mapping Repository Dashboard</span>
+</nav>
 	<!--<div *ngIf="isLoggedIn" class="logout">
 			<button (click)="logout()">Log Out</button>
 	</div>-->
-</span>
-<div class="container">
+<div class="loginContainer">
 	<div *ngIf="!isLoggedIn" class="login">
 			<div *ngIf="errorMessage" id="errorMessage">Username or Password is incorrect.</div>
 			<label>Username:</label><input id="userInput" placeholder="Username"><br>
