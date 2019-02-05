@@ -1,28 +1,26 @@
-workflow "New workflow" {
+workflow "Deploy to S3" {
   on = "push"
-  resolves = ["Comment on New Issue"]
-}
-
-action "Comment on New Issue" {
-  uses = "waffleio/gh-actions/action-commitissuecommenter@master"
-  secrets = ["GITHUB_TOKEN"]
-  args = "Thanks for creating an issue!"
-}
-
-workflow "Test New Issue on push" {
-  on = "push"
-  resolves = ["Create an issue"]
+  resolves = ["GitHub Action for Slack"]
 }
 
 action "Filters for GitHub Actions" {
   uses = "actions/bin/filter@c6471707d308175c57dfe91963406ef205837dbd"
-  args = "branch test-github-actions"
-  secrets = ["GITHUB_TOKEN"]
+  args = "branch test-branch"
 }
 
-action "Create an issue" {
-  uses = "JasonEtco/create-an-issue@11c8e67a9a77b755021d8349484be7dd2c3092ce"
+action "GitHub Action for AWS" {
+  uses = "actions/aws/cli@aba0951d3bb681880614bbf0daa29b4a0c9d77b8"
   needs = ["Filters for GitHub Actions"]
-  args = ".github/test-issue-template.md"
-  secrets = ["GITHUB_TOKEN"]
+  secrets = [
+    "AWS_ACCESS_KEY_ID",
+    "AWS_SECRET_ACCESS_KEY",
+  ]
+  args = "s3 cp ../../test-doc.txt s3://test.wim.usgs.gov/repo_action/test-doc.txt"
+}
+
+action "GitHub Action for Slack" {
+  uses = "Ilshidur/action-slack@5faabb4216b20af98fe77b6d9048d24becfefd31"
+  needs = ["GitHub Action for AWS"]
+  secrets = ["SLACK_WEBHOOK"]
+  args = "Successfully deployed to S3"
 }
