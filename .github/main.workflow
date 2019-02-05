@@ -5,7 +5,7 @@ workflow "Deploy to S3" {
 
 action "Filters for GitHub Actions" {
   uses = "actions/bin/filter@c6471707d308175c57dfe91963406ef205837dbd"
-  args = "branch test-branch"
+  args = "branch test_branch"
 }
 
 action "GitHub Action for AWS" {
