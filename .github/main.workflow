@@ -14,8 +14,9 @@ action "GitHub Action for AWS" {
   secrets = [
     "AWS_ACCESS_KEY_ID",
     "AWS_SECRET_ACCESS_KEY",
+    "GITHUB_TOKEN"
   ]
-  args = "s3 cp /README.md s3://test.wim.usgs.gov/repo_action/README.txt"
+  args = "s3 cp https://github.com/USGS-WiM/wimrepo-dashboard/blob/test_branch/src/app/services/config.ts s3://test.wim.usgs.gov/repo_action/config.ts"
 }
 
 action "GitHub Action for Slack" {
