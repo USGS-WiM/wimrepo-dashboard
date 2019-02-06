@@ -13,10 +13,9 @@ action "GitHub Action for AWS" {
   needs = ["Filters for GitHub Actions"]
   secrets = [
     "AWS_ACCESS_KEY_ID",
-    "AWS_SECRET_ACCESS_KEY",
-    "GITHUB_TOKEN"
+    "AWS_SECRET_ACCESS_KEY"
   ]
-  args = "s3 cp $GITHUB_WORKSPACE/dist/ s3://test.wim.usgs.gov/repo_action/ --recursive"
+  args = "s3 cp $GITHUB_WORKSPACE/dist/ s3://test.wim.usgs.gov/repos/ --recursive"
 }
 
 action "GitHub Action for Slack" {
