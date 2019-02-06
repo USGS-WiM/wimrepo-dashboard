@@ -16,7 +16,7 @@ action "GitHub Action for AWS" {
     "AWS_SECRET_ACCESS_KEY",
     "GITHUB_TOKEN"
   ]
-  args = "s3 cp $GITHUB_REPOSITORY/tree/test_branch/dist s3://test.wim.usgs.gov/repo_action"
+  args = "s3 cp $GITHUB_WORKSPACE/dist/ s3://test.wim.usgs.gov/repo_action/ --recursive"
 }
 
 action "GitHub Action for Slack" {
