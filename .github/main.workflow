@@ -15,7 +15,7 @@ action "GitHub Action for AWS" {
     "AWS_ACCESS_KEY_ID",
     "AWS_SECRET_ACCESS_KEY",
   ]
-  args = "s3 cp /wimlogo.png s3://test.wim.usgs.gov/repo_action/wimlogo.png"
+  args = "s3 cp /src s3://test.wim.usgs.gov/repo_action"
 }
 
 action "GitHub Action for Slack" {
