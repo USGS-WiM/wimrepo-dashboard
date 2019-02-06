@@ -16,7 +16,7 @@ action "GitHub Action for AWS" {
     "AWS_SECRET_ACCESS_KEY",
     "GITHUB_TOKEN"
   ]
-  args = "s3 cp $GITHUB_WORKSPACE/src/app/services/config.ts s3://test.wim.usgs.gov/repo_action/config.ts"
+  args = "s3 cp $GITHUB_WORKSPACE/dist s3://test.wim.usgs.gov/repo_action"
 }
 
 action "GitHub Action for Slack" {
