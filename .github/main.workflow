@@ -15,7 +15,7 @@ action "GitHub Action for AWS" {
     "AWS_ACCESS_KEY_ID",
     "AWS_SECRET_ACCESS_KEY",
   ]
-  args = "s3 cp ../../test-doc.txt s3://test.wim.usgs.gov/repo_action/test-doc.txt"
+  args = "s3 cp /test-doc.txt s3://test.wim.usgs.gov/repo_action/test-doc.txt"
 }
 
 action "GitHub Action for Slack" {
