@@ -1,18 +1,30 @@
-<nav class="nav-main">
-	<span class="nav-brand full-only"><img src="assets/wimvector.png">Web Informatics and Mapping Repository Dashboard</span>
+<nav class="wim-nav">
+    <div class="container" style="width: 100%;">
+        <button class="mobile-nav-toggle" (click)="toggleSidebar()"></button>
+        <a href="https://wim.usgs.gov" class="nav-branding">
+            <img src="https://wim.usgs.gov/visuals/branding/wimvector.png" />
+        </a>
+        <span class="nav-title">
+            Web Informatics and Mapping Repository Dashboard
+        </span>
+        <div class="nav-links">
+            <a (click)="logout()" *ngIf="isLoggedIn">
+                <span>
+                    <span class="nav-link-text">Logout</span>
+                </span>
+            </a>
+        </div>
+    </div>
 </nav>
-	<!--<div *ngIf="isLoggedIn" class="logout">
-			<button (click)="logout()">Log Out</button>
-	</div>-->
 <div class="loginContainer">
 	<div *ngIf="!isLoggedIn" class="login">
 			<div *ngIf="errorMessage" id="errorMessage">Username or Password is incorrect.</div>
 			<label>Username:</label><input id="userInput" placeholder="Username"><br>
-			<label>Password:</label><input type="password" id="passInput" placeholder="Password"><br>
+			<label>Github Token:</label><input type="password" id="passInput" placeholder="Password"><br>
 			<button (click)="login()">Log In</button>
 	</div>
 </div>
-<mat-accordion *ngIf="isLoggedIn" >
+<mat-accordion *ngIf="isLoggedIn">
 
 	<mat-expansion-panel id="repoAccordion">
 		<mat-expansion-panel-header>
