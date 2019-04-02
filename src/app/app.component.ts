@@ -16,7 +16,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
   @ViewChild('withoutCodeTable') withoutCodeTableSort: MatSort;
   @ViewChild('vulnTable') vulnTableSort: MatSort;
 
-  public displayedColumnsWith = ['name', 'created_at', 'description', 'liveurl', 'contact', 'status'];
+  public displayedColumnsWith = ['name', 'created_at', 'description', 'liveurl', 'contact', 'status', 'languages', 'tags'];
   public displayedColumnsWithOut = ['name', 'created_at', 'description'];
   public displayedColumnsVuln = ['name', 'vulnerabilityAlerts', 'vulnerablePackages', 'affectedRange', 'fixedIn'];
 
@@ -34,10 +34,10 @@ export class AppComponent implements OnInit, AfterViewChecked {
   public userInput;
   public passInput;
   public creds;
-  public storedPass;
 
   public isLoggedIn = false;
   public errorMessage = false;
+  public subscription;
 
   // public sortedData: any;
 
@@ -49,10 +49,10 @@ export class AppComponent implements OnInit, AfterViewChecked {
     this.ReposWithCodejson = [];
     this.ReposWithOutCodejson = [];
     this.ReposWithVulnerabilities = [];
-    this.creds = localStorage.getItem('passInput');
-    this.storedPass = localStorage.getItem('credentials');
+    this.passInput = localStorage.getItem('passInput');
+    this.creds = localStorage.getItem('credentials');
 
-    if (this.creds && this.storedPass && !this.checkSetupTime()) {
+    if (this.creds && this.passInput && !this.checkSetupTime()) {
       this.ReposWithCodejson = [];
       this.ReposWithOutCodejson = [];
       this.ReposWithVulnerabilities = [];
@@ -95,11 +95,13 @@ export class AppComponent implements OnInit, AfterViewChecked {
         }
       };
       this.dataSourceVuln.sort = this.vulnTableSort;
-      this.dataSourceVuln.filterPredicate = (data, filter: string)  => {
+      this.dataSourceVuln.filterPredicate = (data, filter: string) => {
         const accumulator = (currentTerm, key) => {
           return this.nestedFilterCheck(currentTerm, data, key);
         };
-        const dataStr = Object.keys(data).reduce(accumulator, '').toLowerCase();
+        const dataStr = Object.keys(data)
+          .reduce(accumulator, '')
+          .toLowerCase();
         // Transform the filter by converting it to lowercase and removing whitespace.
         const transformedFilter = filter.trim().toLowerCase();
         return dataStr.indexOf(transformedFilter) !== -1;
@@ -109,18 +111,19 @@ export class AppComponent implements OnInit, AfterViewChecked {
     this.ReposWithCodejson = [];
     this.ReposWithOutCodejson = [];
 
-    this._wimrepoService.RepoList.subscribe(
-        (repos: Array<Irepo>) => {
-
+    this._wimrepoService.RepoList.subscribe((repos: Array<Irepo>) => {
       let index = 0;
       repos.forEach(repo => {
         index++;
-        this._wimrepoService.getRepoCodejson(repo.name, this.creds).subscribe(code => {
+        this._wimrepoService.getRepoCodejson(repo.name, this.creds).subscribe(
+          code => {
             const decodedContent = atob(code.content);
             const jsonContent = JSON.parse(decodedContent);
             repo.status = jsonContent[0].status;
             repo.contact = jsonContent[0].contact.name;
             repo.liveurl = jsonContent[0].homepageURL;
+            repo.languages = jsonContent[0].languages;
+            repo.tags = jsonContent[0].tags;
             this.ReposWithCodejson.push(repo);
 
             // BAD 4/19/18: moved these up here to ensure they are being set after all data is in and set
@@ -145,7 +148,8 @@ export class AppComponent implements OnInit, AfterViewChecked {
               }
             };
             this.dataSourceWithOutCode.sort = this.withoutCodeTableSort;
-          });
+          }
+        );
       });
     });
 
@@ -156,7 +160,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
     this.passInput = (<HTMLInputElement>document.getElementById('passInput')).value;
 
     this.creds = 'Basic ' + btoa(this.userInput + ':' + this.passInput);
-    // this.passInput = btoa(this.passInput) // not working, even with Bearer added
+    this.passInput = btoa(this.passInput);
     localStorage.setItem('loggedInUser', this.userInput);
     this.setStorageExpiration();
 
@@ -186,6 +190,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
     this.ReposWithOutCodejson = [];
     this.ReposWithVulnerabilities = [];
     localStorage.clear();
+    location.reload();
   }
 
   public applyVulnFilter(filterValue: string) {
@@ -223,11 +228,11 @@ export class AppComponent implements OnInit, AfterViewChecked {
     const now: number = new Date().getTime();
     const setupTime: number = Number(localStorage.getItem('setupTime'));
     if (now - setupTime > twentyFourHours) {
-        // is it greater than 12 hours
-        tooOld = true;
-        localStorage.clear();
+      // is it greater than 12 hours
+      tooOld = true;
+      localStorage.clear();
     }
 
     return tooOld;
-    }
+  }
 }

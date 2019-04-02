@@ -105,7 +105,7 @@ export class WIMRepoService {
         const client = new GraphQLClient('https://api.github.com/graphql', {
             headers: {
                 Accept: 'application/vnd.github.vixen-preview+json',
-                Authorization: 'Bearer ' + pass,
+                Authorization: 'Bearer ' + atob(pass),
             },
         });
         const query1 = `{organization(login:"USGS-WiM") {
@@ -181,7 +181,9 @@ export class WIMRepoService {
                             if (nodes[node].vulnerabilityAlerts.nodes[pkg].fixedIn) {
                                 pack.fixedIn = nodes[node].vulnerabilityAlerts.nodes[pkg].fixedIn;
                             }
-                            newVulnRepo.packages.push(pack);
+                            if (!this.containsObject(pack, newVulnRepo.packages)) {
+                                newVulnRepo.packages.push(pack);
+                            }
                             i++;
                         }
                     }
@@ -189,5 +191,15 @@ export class WIMRepoService {
                 }
             }
         }
+    }
+
+    public containsObject(obj, list) {
+        for (let i = 0; i < list.length; i++) {
+            if (list[i].packageName === obj.packageName && list[i].affectedRange === obj.affectedRange && list[i].fixedIn === obj.fixedIn) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

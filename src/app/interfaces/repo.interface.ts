@@ -45,8 +45,9 @@ export interface Irepo {
     keys_url: string;
     labels_url: string;
     language: string;
+    languages?: Array<string>;
     languages_url: string;
-    license: Ilicense; 
+    license: Ilicense;
     merges_url: string;
     milestones_url: string;
     mirror_url?: string;
@@ -54,8 +55,8 @@ export interface Irepo {
     notifications_url: string;
     open_issues: number;
     open_issues_count: number;
-    owner: Iowner; 
-    permissions: Ipermission; 
+    owner: Iowner;
+    permissions: Ipermission;
     private: boolean;
     pulls_url: string;
     pushed_at: Date;
@@ -69,9 +70,10 @@ export interface Irepo {
     subscription_url: string;
     svn_url: string;
     tags_url: string;
+    tags?: Array<string>;
     teams_url: string;
     trees_url: string;
-    updated_at:Date;
+    updated_at: Date;
     url: string;
     watchers: number;
     watchers_count: number;

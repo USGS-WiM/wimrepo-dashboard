@@ -13,7 +13,8 @@ import { BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [ AppComponent ],
-  imports: [ BrowserModule,BrowserAnimationsModule, HttpModule, MatInputModule, MatTableModule, MatSortModule, MatFormFieldModule, MatExpansionModule ],
+  imports: [ BrowserModule, BrowserAnimationsModule, HttpModule, MatInputModule, MatTableModule, MatSortModule, MatFormFieldModule,
+    MatExpansionModule ],
   providers: [ WIMRepoService ],
   bootstrap: [ AppComponent ]
 })

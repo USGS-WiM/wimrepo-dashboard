@@ -67,3 +67,7 @@ nav.wim-nav {
 .repoTable {
     padding-top: 100px !important;
 }
+
+.filter {
+    border: none !important;
+}
