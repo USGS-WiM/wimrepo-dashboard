@@ -49,8 +49,8 @@ export class WIMRepoService {
     }
 
     // get all the repos (called from constructor)
-    public getRepos(user, pass) {
-        const JSON_HEADERS = new Headers({ 'Accept': 'application/json', 'Authorization': 'Basic ' + btoa(user + ':' + pass) });
+    public getRepos(creds) {
+        const JSON_HEADERS = new Headers({ 'Accept': 'application/json', 'Authorization': creds });
         const options = new RequestOptions({ headers: JSON_HEADERS });
         // need to request the repos in 2 separate calls due to limits on # of repos returned. using '?page=1&per_page=100'
         this._http.get(CONFIG.GETREPOS1_URL, options)
@@ -80,11 +80,14 @@ export class WIMRepoService {
     }
 
     // get each repo's code.json file (called from the app.component.ts subscription to RepoList() )
-    public getRepoCodejson(repoName, user, pass): Observable<Icodejson> {
-        const JSON_HEADERS = new Headers({ 'Accept': 'application/json', 'Authorization': 'Basic ' + btoa(user + ':' + pass) });
+    public getRepoCodejson(repoName, creds): Observable<Icodejson> {
+        const JSON_HEADERS = new Headers({ 'Accept': 'application/json', 'Authorization': creds });
         const options = new RequestOptions({ headers: JSON_HEADERS });
         return this._http.get(CONFIG.GETREPO_CODE_URL + repoName + '/contents/code.json', options)
-            .map((response: Response) => <Icodejson>response.json())
+            .map((response: Response) => {
+                if (response) {localStorage.setItem('credentials', creds); }
+                return <Icodejson>response.json();
+            })
             .catch((err, caught) => this.handleError(err, caught));
     }
 
@@ -102,7 +105,7 @@ export class WIMRepoService {
         const client = new GraphQLClient('https://api.github.com/graphql', {
             headers: {
                 Accept: 'application/vnd.github.vixen-preview+json',
-                Authorization: 'Bearer ' + pass,
+                Authorization: 'Bearer ' + atob(pass),
             },
         });
         const query1 = `{organization(login:"USGS-WiM") {
@@ -150,6 +153,7 @@ export class WIMRepoService {
         this.getVulnData(vulnReturn);
         const vulnReturn2 = await client.request(query2);
         this.getVulnData(vulnReturn2);
+        localStorage.setItem('passInput', pass);
         this._repoVulnSubject.next(this.reposWithVulnerabilities);
     }
 
@@ -177,7 +181,9 @@ export class WIMRepoService {
                             if (nodes[node].vulnerabilityAlerts.nodes[pkg].fixedIn) {
                                 pack.fixedIn = nodes[node].vulnerabilityAlerts.nodes[pkg].fixedIn;
                             }
-                            newVulnRepo.packages.push(pack);
+                            if (!this.containsObject(pack, newVulnRepo.packages)) {
+                                newVulnRepo.packages.push(pack);
+                            }
                             i++;
                         }
                     }
@@ -185,5 +191,15 @@ export class WIMRepoService {
                 }
             }
         }
+    }
+
+    public containsObject(obj, list) {
+        for (let i = 0; i < list.length; i++) {
+            if (list[i].packageName === obj.packageName && list[i].affectedRange === obj.affectedRange && list[i].fixedIn === obj.fixedIn) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
