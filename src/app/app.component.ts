@@ -59,7 +59,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
       this.isLoggedIn = true;
       this.getRepos();
     } else {
-      this.isLoggedIn = false;
+      this.logout();
     }
   }
   // end ngOnInit()
