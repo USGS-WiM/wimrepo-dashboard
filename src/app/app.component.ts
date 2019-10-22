@@ -1,8 +1,7 @@
-import { Component, ViewChild, OnInit, AfterViewChecked, OnDestroy } from '@angular/core';
+import { Component, ViewChild, OnInit, AfterViewChecked } from '@angular/core';
 import { WIMRepoService } from './services/wimrepo.service';
 import { MatTableDataSource, MatSort } from '@angular/material';
 import { Irepo } from './interfaces/repo.interface';
-import * as jwt from 'express-jwt';
 
 @Component({
   // tslint:disable:indent
@@ -59,7 +58,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
       this.isLoggedIn = true;
       this.getRepos();
     } else {
-      this.logout();
+      this.logout(true);
     }
   }
   // end ngOnInit()
@@ -184,13 +183,13 @@ export class AppComponent implements OnInit, AfterViewChecked {
     });
   }
 
-  public logout() {
+  public logout(init?) {
     this.isLoggedIn = false;
     this.ReposWithCodejson = [];
     this.ReposWithOutCodejson = [];
     this.ReposWithVulnerabilities = [];
     localStorage.clear();
-    location.reload();
+    if (!init) { location.reload(); }
   }
 
   public applyVulnFilter(filterValue: string) {
